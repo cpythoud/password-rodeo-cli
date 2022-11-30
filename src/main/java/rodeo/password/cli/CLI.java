@@ -60,6 +60,45 @@ public class CLI implements Callable<Integer> {
     @Override
     public Integer call() {
         Console.ok("*** Password Rodeo CLI ***");
+
+        int maxLetters = Math.max(3, length / 3);
+
+        if (minDigits < 1 || minDigits > maxLetters) {
+            Console.error("--min-digits value must fall between 1 & " + maxLetters + " when password length is " + length);
+            return ExitCode.USAGE;
+        }
+        if (minDigits > maxDigits) {
+            Console.error("--min-digits must be smaller than --max-digit");
+            return ExitCode.USAGE;
+        }
+        if (maxDigits < 1 || maxDigits > maxLetters) {
+            Console.error("--max-digits value must fall between 1 & " + maxLetters + " when password length is " + length);
+            return ExitCode.USAGE;
+        }
+
+        if (minSymbols < 1 || minSymbols > maxLetters) {
+            Console.error("--min-symbols value must fall between 1 & " + maxLetters + " when password length is " + length);
+            return ExitCode.USAGE;
+        }
+        if (minSymbols > maxSymbols) {
+            Console.error("--min-symbols must be smaller than --max-symbols");
+            return ExitCode.USAGE;
+        }
+        if (maxSymbols < 1 || maxSymbols > maxLetters) {
+            Console.error("--max-symbols value must fall between 1 & " + maxLetters + " when password length is " + length);
+            return ExitCode.USAGE;
+        }
+
+        if (length < 1 || length > 100_000) {
+            Console.error("--length must fall between 1 and 100,000");
+            return ExitCode.USAGE;
+        }
+
+        if (count < 1 || count > 100_000) {
+            Console.error("--count must fall between 1 and 100,000");
+            return ExitCode.USAGE;
+        }
+
         return ExitCode.OK;
     }
 

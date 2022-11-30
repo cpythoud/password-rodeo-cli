@@ -8,6 +8,7 @@ class Console {
 
     private static final PrintStream OUT = System.err;
     private static final String OK = "green";
+    private static final String ERROR = "red";
 
     private static void println(String message, String color) {
         OUT.println(ansiFormat(message, color));
@@ -19,6 +20,10 @@ class Console {
 
     static void ok(String message) {
         println(message, OK);
+    }
+
+    static void error(String message) {
+        println("Error: " + message, ERROR);
     }
 
 }
