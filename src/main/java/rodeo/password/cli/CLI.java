@@ -7,6 +7,8 @@ import picocli.CommandLine.Option;
 
 import picocli.jansi.graalvm.AnsiConsole;
 
+import rodeo.password.pgencheck.PasswordMaker;
+
 import java.util.concurrent.Callable;
 
 import static rodeo.password.pgencheck.CharacterGroups.*;
@@ -59,7 +61,8 @@ public class CLI implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        Console.ok("*** Password Rodeo CLI ***");
+        if (!quiet)
+            Console.ok("*** Password Rodeo CLI ***");
 
         int maxLetters = Math.max(3, length / 3);
 
@@ -98,6 +101,21 @@ public class CLI implements Callable<Integer> {
             Console.error("--count must fall between 1 and 100,000");
             return ExitCode.USAGE;
         }
+
+        var factory = PasswordMaker.factory()
+                .setLength(length)
+                .addCharGroup(unambiguous ? UNAMBIGUOUS_LOWER_CASE : LOWER_CASE)
+                .addCharGroup(unambiguous ? UNAMBIGUOUS_UPPER_CASE : UPPER_CASE)
+                .addCharGroup(unambiguous ? UNAMBIGUOUS_DIGITS : DIGITS, minDigits, maxDigits);
+        if (symbols)
+            factory.addCharGroup(unambiguous ? UNAMBIGUOUS_SYMBOLS : SYMBOLS, minSymbols, maxSymbols);
+        var passwordMaker = factory.create();
+
+        for (int i = 1; i <= count; ++i)
+            System.out.println(passwordMaker.create());
+
+        if (!quiet)
+            Console.ok("Generated " + count + " password" + (count > 1 ? "s" : ""));
 
         return ExitCode.OK;
     }
